@@ -2,6 +2,8 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'homepage.dart';
+
 void main() {
   runApp(DevicePreview(
       builder: (BuildContext context) => MaterialApp(useInheritedMediaQuery: true,
@@ -19,6 +21,7 @@ class Login_validate extends StatefulWidget {
 class Login_validate_state extends State<Login_validate> {
   @override
     GlobalKey<FormState> formkey=GlobalKey();
+  bool showpass=true;
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +47,7 @@ class Login_validate_state extends State<Login_validate> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20))),
                   validator:(uname) {
-                    if(uname!.isEmpty || uname!.contains('@') ||uname.contains('.')) {
+                    if(uname!.isEmpty || !uname.contains('@') ||!uname.contains('.')) {
                       return 'Enter valid username';
                     }
                     else{
@@ -57,18 +60,43 @@ class Login_validate_state extends State<Login_validate> {
               Padding(
                 padding: const EdgeInsets.only(top: 30, left: 50, right: 50),
                 child: TextFormField(
+                  obscureText:showpass ,
+                  obscuringCharacter: "*",
                   decoration: InputDecoration(
                       hintText: "password",
                       prefixIcon: Icon(Icons.person),
+                      suffixIcon: IconButton(onPressed: () {
+                        setState(() {
+                          if(showpass){
+                            showpass=false;
+                          }
+                          else{
+                            showpass=true;
+                          }
+
+                        });
+                      }, icon: Icon(showpass==true ? Icons.visibility_off : Icons.visibility),),
                       labelText: "password",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20))),
+                  validator:(password) {
+                    if(password!.isEmpty || password.length<6){
+                      return "Enter a valid password";
+                    }
+                    else
+                      return null;
+                  },
                 ),
               ),
               SizedBox(
                 height: 30,
               ),
-              ElevatedButton(onPressed: () {}, child: Text("Login")),
+              ElevatedButton(onPressed: () {
+                final valid =formkey.currentState!.validate();
+                if(valid){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Homepage()));
+                }
+              }, child: Text("Login")),
               SizedBox(
                 height: 30,
               ),
@@ -80,3 +108,4 @@ class Login_validate_state extends State<Login_validate> {
     );
   }
 }
+
