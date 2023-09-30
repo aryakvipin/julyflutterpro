@@ -25,7 +25,7 @@ class Login_validate_state extends State<Login_validate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Login Page"),
+        title: Text("Login Page",style: TextStyle(fontSize: 30),),
       ),
       body: SingleChildScrollView(
         child: Form(

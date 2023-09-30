@@ -27,7 +27,10 @@ class Listsepertae extends StatelessWidget{
         ),);
       },
           separatorBuilder: (context,index){
-          return Text(clas[index]);
+          return Divider(
+            thickness: 5,
+            color: Colors.cyan,
+          );
           }, itemCount: name.length),
       
       

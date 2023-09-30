@@ -1,93 +1,82 @@
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: TheNewsDemo(),
-  ));
+void main(){
+  runApp(DevicePreview(builder: (BuildContext context) =>MaterialApp(
+    useInheritedMediaQuery: true,
+    home: MyListView(),)));
 }
-
-class TheNewsDemo extends StatefulWidget {
-  const TheNewsDemo({Key? key}) : super(key: key);
+class MyListView extends StatefulWidget {
+  const MyListView({super.key});
 
   @override
-  _TheNewsDemoState createState() => _TheNewsDemoState();
+  State<MyListView> createState() => _MyListViewState();
 }
 
-class _TheNewsDemoState extends State<TheNewsDemo> {
-  List<Map<String, dynamic>> theNews = [
-    {
-      'day': 'March 3',
-      'articles': [
-        'News Article 1',
-        'News Article 2',
-      ],
-    },
-    {
-      'day': 'March 4',
-      'articles': [
-        'News Article 3',
-      ],
-    },
-    {
-      'day': 'March 5',
-      'articles': [
-        'News Article 4',
-        'News Article 5',
-        'News Article 6',
-      ],
-    },
-  ];
+class _MyListViewState extends State<MyListView> {
+  List<String> items = <String>['1', '2', '3', '4', '5'];
+
+  void _reverse() {
+    setState(() {
+      items = items.reversed.toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: theNews.length,
-        itemBuilder: (BuildContext context, int index) {
-          final element = theNews[index];
-          return NewsDay(
-            day: element['day'],
-            articles: element['articles'],
-          );
-        },
+      body: SafeArea(
+        child: ListView.custom(
+          childrenDelegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                return KeepAlive(
+                  data: items[index],
+                  key: ValueKey<String>(items[index]),
+                );
+              },
+              childCount: items.length,
+              findChildIndexCallback: (Key key) {
+                final ValueKey<String> valueKey = key as ValueKey<String>;
+                final String data = valueKey.value;
+                return items.indexOf(data);
+              }
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextButton(
+              onPressed: () => _reverse(),
+              child: const Text('Reverse items'),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class NewsDay extends StatelessWidget {
-  const NewsDay({
-    Key? key,
-    required this.day,
-    required this.articles,
+class KeepAlive extends StatefulWidget {
+  const KeepAlive({
+    required Key key,
+    required this.data,
   }) : super(key: key);
 
-  final String day;
-  final List<String> articles;
+  final String data;
 
   @override
-  Widget build(BuildContext context) {
-    return ExpansionTile(
-      initiallyExpanded: true,
-      title: Text(day),
-      children: [
-        for (final article in articles) NewsItem(article: article),
-      ],
-    );
-  }
+  State<KeepAlive> createState() => _KeepAliveState();
 }
 
-class NewsItem extends StatelessWidget {
-  const NewsItem({
-    Key? key,
-    required this.article,
-  }) : super(key: key);
-
-  final String article;
+class _KeepAliveState extends State<KeepAlive> with AutomaticKeepAliveClientMixin{
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(title: Text(article));
+    super.build(context);
+    return Text(widget.data);
   }
 }
