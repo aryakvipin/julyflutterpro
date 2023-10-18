@@ -25,7 +25,6 @@ class List_builders  extends StatelessWidget{
        child: ListTile(
          title:Text(name[index]) ,
          subtitle:Text(phone[index]) ,
-         leading:CircleAvatar(backgroundImage: AssetImage(image[index]),) ,
          trailing: Icon(Icons.call),
        ),
      );

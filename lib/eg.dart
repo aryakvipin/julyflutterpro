@@ -1,82 +1,154 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-void main(){
-  runApp(DevicePreview(builder: (BuildContext context) =>MaterialApp(
-    useInheritedMediaQuery: true,
-    home: MyListView(),)));
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'egg.dart';
+import 'gridbuiler.dart';
+
+void main() {
+  runApp(MaterialApp
+    ( debugShowCheckedModeBanner: false,home: BottemNavBar()));
 }
-class MyListView extends StatefulWidget {
-  const MyListView({super.key});
+
+class BottemNavBar extends StatefulWidget {
 
   @override
-  State<MyListView> createState() => _MyListViewState();
+  State<StatefulWidget> createState() => BottemNavBarState();
 }
 
-class _MyListViewState extends State<MyListView> {
-  List<String> items = <String>['1', '2', '3', '4', '5'];
 
-  void _reverse() {
+class BottemNavBarState extends State {
+  List<Color> colors = [
+    Colors.blueGrey,
+    Colors.green,
+    Colors.deepOrange,
+    Colors.purple
+  ];
+  int _selectedIndexForBottomNavigationBar = 0;
+  int _selectedIndexForTabBar = 0;
+
+
+  //1
+  static List _listOfIconsForBottomNavigationBar = [
+
+    GridViewbuilder(),
+    GridViewbuilder(),
+    GridViewbuilder(),
+    GridViewbuilder(),
+  ];
+
+
+  //2
+  static List _listOfIconsForTabBar = [
+    GridViewbuilder(),
+    GridViewbuilder(),
+    GridViewbuilder(),
+    GridViewbuilder(),
+
+
+
+  ];
+
+  void _onItemTappedForBottomNavigationBar(int index) {
     setState(() {
-      items = items.reversed.toList();
+      _selectedIndexForBottomNavigationBar = index;
+      _selectedIndexForTabBar = 0;
+    });
+  }
+
+
+  //4
+  void _onItemTappedForTabBar(int index) {
+    setState(() {
+      _selectedIndexForTabBar = index + 1;
+      _selectedIndexForBottomNavigationBar = 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: ListView.custom(
-          childrenDelegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                return KeepAlive(
-                  data: items[index],
-                  key: ValueKey<String>(items[index]),
-                );
-              },
-              childCount: items.length,
-              findChildIndexCallback: (Key key) {
-                final ValueKey<String> valueKey = key as ValueKey<String>;
-                final String data = valueKey.value;
-                return items.indexOf(data);
-              }
-          ),
+    //5
+    final tabBar = new TabBar(labelColor: Colors.redAccent,
+      onTap: _onItemTappedForTabBar,
+      indicatorColor: Colors.redAccent,
+      unselectedLabelColor: Colors.black,
+      tabs: [
+        new Tab(
+          text: "for you",
+
         ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextButton(
-              onPressed: () => _reverse(),
-              child: const Text('Reverse items'),
-            ),
-          ],
+        new Tab(
+          text: "Design",
         ),
-      ),
+        new Tab(
+          text: "Beauty",
+        ),
+        new Tab(
+          text: "Education",
+        ),
+      ],
     );
-  }
-}
 
-class KeepAlive extends StatefulWidget {
-  const KeepAlive({
-    required Key key,
-    required this.data,
-  }) : super(key: key);
 
-  final String data;
 
-  @override
-  State<KeepAlive> createState() => _KeepAliveState();
-}
+    //6
+    // ignore: unnecessary_new
+    return DefaultTabController(length: 4, child:
+    Scaffold(
+      appBar: AppBar(
+        bottom: tabBar,
+        backgroundColor: Colors.white60,
 
-class _KeepAliveState extends State<KeepAlive> with AutomaticKeepAliveClientMixin{
-  @override
-  bool get wantKeepAlive => true;
+        title: Center(child: Text("Categories",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.black),)),
+        //centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.menu,color: Colors.black,),
+          onPressed: () {},
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search_rounded,color: Colors.black,),
+            onPressed: () {},
+          )
+        ],
+        //backgroundColor: Colors.purple,
 
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return Text(widget.data);
+      ),
+
+
+      //7
+      body:
+
+      Center(child: _selectedIndexForTabBar == 0 ?
+
+      _listOfIconsForBottomNavigationBar.elementAt(
+          _selectedIndexForBottomNavigationBar) :
+      _listOfIconsForTabBar.elementAt(_selectedIndexForTabBar - 1),
+
+
+      ),backgroundColor: Colors.white,
+
+      bottomNavigationBar:
+
+      BottomNavigationBar(
+        backgroundColor: Colors.white60,
+        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.redAccent,
+        showSelectedLabels: false,   // <-- HERE
+        showUnselectedLabels: false,
+        type: BottomNavigationBarType.fixed,
+        onTap: _onItemTappedForBottomNavigationBar,
+        // this will be set when a new tab is tapped
+        items:  [
+          BottomNavigationBarItem(icon: Icon(Icons.home,),label: "Home"),
+          BottomNavigationBarItem(icon:FaIcon(FontAwesomeIcons.folder),label: "file"),
+          BottomNavigationBarItem(icon:FaIcon(FontAwesomeIcons.heart),label: "faverote"),
+          BottomNavigationBarItem(icon: Icon(Icons.person),label: "person"),
+          BottomNavigationBarItem(icon: Icon(Icons.settings,),label: "setting"),
+
+        ],
+        currentIndex: _selectedIndexForBottomNavigationBar,
+      ),
+    ));
   }
 }
