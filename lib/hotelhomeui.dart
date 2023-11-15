@@ -62,7 +62,8 @@ class _HomePageState extends State<HomePage> {
               IconButton(
                 icon: FaIcon(FontAwesomeIcons.heart),
                 onPressed: () {},
-              ),
+
+              ) ,
             ],
             bottom: AppBar(
               elevation: 0,
@@ -179,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                        // icon
                       Padding(
-                        padding: const EdgeInsets.only(top: 15),
+                        padding: const EdgeInsets.only(top: 15,right: 250),
                         child: Text(
                           "Awesome Room near Boddha",
                           style: TextStyle(
